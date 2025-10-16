@@ -1,0 +1,43 @@
+#**Imports** 
+import customtkinter 
+from google import genai
+import pyautogui
+import PIL
+import tkinter.messagebox
+
+# Connecting To Gemeni, you can get your api key at https://aistudio.google.com/welcome?utm_source=google&utm_medium=cpc&utm_campaign=FY25-global-DR-gsem-BKWS-1710442&utm_content=text-ad-none-any-DEV_c-CRE_726057516168-ADGP_Hybrid%20%7C%20BKWS%20-%20EXA%20%7C%20Txt-Gemini-Gemini%20API%20Key-KWID_2337564139625-aud-2303776546298:kwd-2337564139625&utm_term=KW_gemini%20api%20key-ST_gemini%20api%20key&gclsrc=aw.ds&gad_source=1&gad_campaignid=20866959509&gbraid=0AAAAACn9t66QEeEEkj_JHhFAQ4R_RMlJk&gclid=CjwKCAjwr8LHBhBKEiwAy47uUrtLwqL5lJvkUiVsSe9jSKOVsP_E7WGG41EOsny5g8QB5RSIg6KKWRoCMv8QAvD_BwE
+client = genai.Client(api_key="Your Api Key")
+
+#Function To take the screenshot and send it to Gemeni
+def take_screenshot():
+
+    screenshot = pyautogui.screenshot()
+    screenshot.save("full_screen_pyauthogui.png")
+    img = PIL.Image.open(r'full_screen_pyauthogui.png')
+    responses = client.models.generate_content(
+        model="gemini-2.5-flash", contents=[img,f'{text.get()}']
+    )
+    tkinter.messagebox.showinfo("This is your answer.",  responses.text)
+
+#Function To quit The App
+def q():
+    app.quit()
+    quit()
+
+#Making the boundaries and configuring the Window
+app = customtkinter.CTk()
+app.geometry("255x300")
+bb = customtkinter.CTkFrame(app)
+
+#texts/buttons
+text = customtkinter.CTkEntry(bb, placeholder_text='Put Your Question Here')
+button = customtkinter.CTkButton(bb, text="Click",command=take_screenshot, height=50, width=150)
+button2 = customtkinter.CTkButton(bb, text="And Quit", command=q,  height=50, width=150)
+
+#placments of text/buttons with padding
+text.grid(row=0,column=0)
+button.grid(row=1, column=0, padx=20,pady=20, sticky="nsew")
+button2.grid(row=2, column=0,padx=20,pady=20, sticky="nsew")
+bb.grid(row=2, column=2, sticky="nsew")
+bb.pack(padx=20, pady=20)
+app.mainloop()
